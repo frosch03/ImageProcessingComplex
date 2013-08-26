@@ -64,10 +64,9 @@ apply (zipOP, foldOP) = apply_ (zipWith zipOP, foldl1 foldOP)
 apply_ :: (([a] -> [a] -> [b]), ([b] -> a)) -> Picture a -> Mask a -> Picture a
 apply_ (zipit, foldit) pict@(Picture p) mask@(Mask (Picture m) _)
     = Picture $ map (map calcNewPixel) prepared
-    where maskList           = concat m
-          (Picture prepared) = prepare pict mask
+    where (Picture prepared) = prepare pict mask
           calcNewPixel (pixel, Nothing)  = pixel
-          calcNewPixel (_    , Just env) = foldit $ zipit (concat env) (maskList)
+          calcNewPixel (_    , Just env) = foldit $ zipit (concat env) (concat m)
 
 
 type MaskBit    = Bool
@@ -160,3 +159,18 @@ test42 = Picture $
       ++ [empty]
     where empty = (replicate 16 False)
 
+tstMsk :: Mask Bool
+tstMsk = Mask (Picture tstMsk_) (0,1)
+
+tstMsk_ :: [[Bool]]
+tstMsk_ = [ [False]
+          , [True]
+          ]
+
+tstPct :: Picture Bool
+tstPct = Picture $
+        [ [False, False, True,  False]
+        , [False, False, True,  False]
+        , [False, True,  False, False]
+        , [False, False, False, False]
+        ]

@@ -124,8 +124,7 @@ walkPic f m p = Picture $ front ++ (walkPic' f m p) ++ back
     where rws   = unPicture p
           lstM  = toList m
 
-          maskProp  = (head $ map length lstM, length lstM)
-          maskXSize = fst maskProp
+          maskProp  = (head $ map length lstM, length lstM) -- Maybe instead of head the maximum is better? DRY
           maskYSize = snd maskProp
 
           front =           (take (maskYSize `div` 2)) $ rws
@@ -139,7 +138,7 @@ walkPic' f m p = if (drop maskYSize lstP) == []
     where lstP      = toList p
           lstM      = toList m
           nxtP      = toPict $ drop 1 lstP
-          maskProp  = (head $ map length lstM, length lstM)
+          maskProp  = (head $ map length lstM, length lstM)-- Maybe instead of head the maximum is better?  DRY
           maskYSize = snd maskProp
 
 

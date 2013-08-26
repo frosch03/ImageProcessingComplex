@@ -22,6 +22,11 @@ close :: Mask Bool -> Picture Bool -> Picture Bool
 close m p = applyErosion m    . applyDilatation m $ p
 
 
+invert :: (Num a) => Picture a -> Picture a
+invert =
+  toPict . map (map (255 -)) . toList
+
+
 
 test42 :: Picture Bool
 test42 = toPict $ 
