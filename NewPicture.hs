@@ -58,11 +58,8 @@ prepare (Picture p) mask@(Mask (Picture m) _)
           (offsetN, offsetE, offsetS, offsetW) = spacer mask
           
 
-apply :: ((a -> a -> a), (a -> a -> a)) -> Picture a -> Mask a -> Picture a
-apply (zipOP, foldOP) = apply_ (zipWith zipOP, foldl1 foldOP)
-
-apply_ :: (([a] -> [a] -> [b]), ([b] -> a)) -> Picture a -> Mask a -> Picture a
-apply_ (zipit, foldit) pict@(Picture p) mask@(Mask (Picture m) _)
+apply :: (([a] -> [a] -> [b]), ([b] -> a)) -> Picture a -> Mask a -> Picture a
+apply (zipit, foldit) pict@(Picture p) mask@(Mask (Picture m) _)
     = Picture $ map (map calcNewPixel) prepared
     where (Picture prepared) = prepare pict mask
           calcNewPixel (pixel, Nothing)  = pixel
@@ -81,10 +78,10 @@ reduceTr op done  (Just next) = op done next
 reduceTr _  done   Nothing    = done
 
 erode :: Picture Bool -> Mask Bool -> Picture Bool
-erode = apply_ (zipWith mergeTr, foldl (reduceTr (&&)) True)
+erode = apply (zipWith mergeTr, foldl (reduceTr (&&)) True)
 
 dilate :: Picture Bool -> Mask Bool -> Picture Bool
-dilate = apply_ (zipWith mergeTr, foldl (reduceTr (||)) False)
+dilate = apply (zipWith mergeTr, foldl (reduceTr (||)) False)
 
 
 
@@ -105,31 +102,31 @@ dot :: Mask Bool
 dot = Mask (Picture [[True]]) (0,0)
 
 senkrecht :: Mask Bool
-senkrecht = Mask (Picture senkrecht_) (0,1)
+senkrecht = Mask (Picture senkrecht') (0,1)
 
-senkrecht_ :: [[Bool]] 
-senkrecht_ = [ [True]
+senkrecht' :: [[Bool]] 
+senkrecht' = [ [True]
              , [True]
              , [True]
              ]
 
 waagerecht :: Mask Bool
-waagerecht = Mask (Picture waagerecht_) (1,0)
+waagerecht = Mask (Picture waagerecht') (1,0)
 
-waagerecht_ :: [[Bool]]
-waagerecht_ = [[True, True, True]]
+waagerecht' :: [[Bool]]
+waagerecht' = [[True, True, True]]
 
 slash :: Mask Bool
-slash = Mask (Picture slash_) (1,1)
+slash = Mask (Picture slash') (1,1)
 
-slash_ :: [[Bool]]
-slash_ = [ [False, False, True]
+slash' :: [[Bool]]
+slash' = [ [False, False, True]
          , [False, True, False]
          , [True, False, False]
          ]
 
 testSlash :: Picture Bool
-testSlash = Picture slash_
+testSlash = Picture slash'
 
 testPict :: Picture Bool
 testPict = Picture $ [ [False, False, False, False, False]
@@ -160,10 +157,10 @@ test42 = Picture $
     where empty = (replicate 16 False)
 
 tstMsk :: Mask Bool
-tstMsk = Mask (Picture tstMsk_) (0,1)
+tstMsk = Mask (Picture tstMsk') (0,1)
 
-tstMsk_ :: [[Bool]]
-tstMsk_ = [ [False]
+tstMsk' :: [[Bool]]
+tstMsk' = [ [False]
           , [True]
           ]
 
